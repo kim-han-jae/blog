@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
 }
 
 @theme inline {
@@ -12,15 +12,73 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.prose-content h1,
+.prose-content h2,
+.prose-content h3 {
+  margin-top: 1.6rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+}
+
+.prose-content h2 {
+  font-size: 1.4rem;
+}
+
+.prose-content p,
+.prose-content li {
+  line-height: 1.75;
+  color: #374151;
+}
+
+.prose-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-content a:hover {
+  color: #1d4ed8;
+}
+
+.prose-content strong {
+  color: #111827;
+  font-weight: 700;
+  background: #f3f4f6;
+  padding: 0 0.2rem;
+  border-radius: 0.25rem;
+}
+
+.prose-content pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: #111827;
+  padding: 1rem;
+  color: #f9fafb;
+}
+
+.prose-content blockquote {
+  border-left: 3px solid #d4d4d8;
+  padding-left: 1rem;
+  color: #52525b;
+}
+
+.prose-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prose-content table th,
+.prose-content table td {
+  border: 1px solid #e4e4e7;
+  padding: 0.5rem;
+}
+
+.prose-content input[type="checkbox"] {
+  margin-right: 0.4rem;
 }

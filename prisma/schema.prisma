@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum KeywordStatus {
+  NEW
+  BRIEFED
+  DRAFTED
+  REVIEWED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BriefStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Keyword {
+  id                   String          @id @default(cuid())
+  keyword              String          @unique
+  cluster              String?
+  category             String
+  searchIntent         String
+  priorityScore        Float           @default(0)
+  topicRelevanceScore  Float           @default(0)
+  competitionScore     Float           @default(0)
+  seasonalityScore     Float           @default(0)
+  status               KeywordStatus   @default(NEW)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  brief                ContentBrief?
+  posts                Post[]
+}
+
+model ContentBrief {
+  id                 String      @id @default(cuid())
+  keywordId          String      @unique
+  workingTitle       String
+  targetReader       String
+  primaryQuestion    String
+  secondaryQuestions Json?
+  outline            Json?
+  requiredExamples   Json?
+  recommendedCTA     String?
+  affiliatePossible  Boolean     @default(false)
+  status             BriefStatus @default(PENDING)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  keyword Keyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id              String     @id @default(cuid())
+  keywordId       String?
+  slug            String     @unique
+  title           String
+  excerpt         String?
+  contentMdx      String
+  category        String
+  tags            String[]
+  postType        String
+  seoTitle        String?
+  metaDescription String?
+  ogImage         String?
+  faqJson         Json?
+  schemaJson      Json?
+  isPublished     Boolean    @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  keyword   Keyword?       @relation(fields: [keywordId], references: [id], onDelete: SetNull)
+  analytics PostAnalytics?
+}
+
+model PostAnalytics {
+  id             String   @id @default(cuid())
+  postId         String   @unique
+  impressions    Int      @default(0)
+  clicks         Int      @default(0)
+  ctr            Float    @default(0)
+  avgPosition    Float    @default(0)
+  pageViews      Int      @default(0)
+  affiliateClicks Int     @default(0)
+  ctaClicks      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
