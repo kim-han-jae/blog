@@ -40,6 +40,9 @@ export const metadata: Metadata = {
       "naver-site-verification": process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? "",
     },
   },
+  other: {
+    "google-adsense-account": "ca-pub-5289044385214327",
+  },
 };
 
 export default function RootLayout({

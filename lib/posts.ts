@@ -174,8 +174,6 @@ export function buildDraftTemplate(input: {
     "",
     sections,
     "",
-    "<AdPlaceholder label=\"본문 중간 광고\" />",
-    "",
     `## CTA`,
     "",
     `<CTABox title="관련 이슈 더 보기" description="${
