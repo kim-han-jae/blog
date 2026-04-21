@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { getAllPosts } from "@/lib/posts";
 import { PostCard } from "@/components/blog/post-card";
+import { AdPlaceholder } from "@/components/cta/ad-placeholder";
 
 export const metadata = buildMetadata({
   title: "최근 시사 이슈 블로그",
@@ -37,6 +38,7 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+      <AdPlaceholder label="홈 하단 광고" slot={process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_HOME} />
     </div>
   );
 }

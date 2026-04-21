@@ -1,11 +1,25 @@
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+function resolveSiteUrl() {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit;
+
+  const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (productionDomain) return `https://${productionDomain}`;
+
+  const previewDomain = process.env.VERCEL_URL;
+  if (previewDomain) return `https://${previewDomain}`;
+
+  return "http://localhost:3000";
+}
+
+const siteUrl = resolveSiteUrl();
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "이슈있슈";
 
 export const seoConfig = {
   siteUrl,
   siteName,
+  defaultAuthor: process.env.NEXT_PUBLIC_SITE_AUTHOR ?? "이슈있슈 편집팀",
   locale: "ko_KR",
   defaultDescription:
     "키워드 수집부터 브리프, 초안, 검수, 발행까지 연결하는 검색 기반 콘텐츠 운영 도구",

@@ -30,6 +30,8 @@ NEXT_PUBLIC_NAVER_SITE_VERIFICATION=""
 NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT="ca-pub-xxxxxxxxxxxxxxxx"
 NEXT_PUBLIC_GOOGLE_ADSENSE_PUBLISHER_ID="pub-xxxxxxxxxxxxxxxx"
 NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_IN_ARTICLE="1234567890"
+NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_HOME="1234567890"
+NEXT_PUBLIC_SITE_AUTHOR="이슈있슈 편집팀"
 ```
 
 ## Prisma migrate 방법
@@ -73,6 +75,7 @@ npm run dev
 - `NEXT_PUBLIC_SITE_URL`에 실제 운영 도메인을 넣고 배포
 - `https://도메인/robots.txt`, `https://도메인/sitemap.xml`, `https://도메인/rss.xml` 동작 확인
 - `https://도메인/llms.txt`, `https://도메인/llms-full.txt` 공개 확인(GEO)
+- `https://도메인/manifest.webmanifest` 확인(앱/브랜드 메타데이터)
 - Google Search Console에서 사이트맵 제출 + 색인 요청
 - Naver 서치어드바이저에서 사이트 등록 및 소유권 인증
 - AdSense 승인 후 `NEXT_PUBLIC_GOOGLE_ADSENSE_*` 환경변수 채우고 광고 슬롯 배치

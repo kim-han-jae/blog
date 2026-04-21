@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/blog/breadcrumbs";
 import { TableOfContents } from "@/components/blog/toc";
 import { FaqList } from "@/components/blog/faq-list";
+import { AdPlaceholder } from "@/components/cta/ad-placeholder";
 import { CTABox } from "@/components/cta/cta-box";
 import { PostCard } from "@/components/blog/post-card";
 import { Badge } from "@/components/ui/badge";
@@ -77,9 +78,13 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
     title: post.title,
     description: post.excerpt,
     publishedAt: post.publishedAt?.toISOString(),
-    updatedAt: post.createdAt.toISOString(),
+    updatedAt: (post.publishedAt ?? post.createdAt).toISOString(),
     image: `${seoConfig.siteUrl}/opengraph-image`,
     category: post.category,
+    tags: post.tags,
+    authorName: seoConfig.defaultAuthor,
+    publisherName: seoConfig.siteName,
+    publisherLogo: `${seoConfig.siteUrl}/logo-issueisshu.svg`,
   });
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: "홈", url: seoConfig.siteUrl },
@@ -128,6 +133,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
       </div>
 
       <FaqList items={faqs} />
+      <AdPlaceholder label="본문 하단 광고" slot={process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_IN_ARTICLE} />
 
       {relatedPosts.length > 0 && (
         <section className="space-y-4">

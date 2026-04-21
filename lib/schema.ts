@@ -47,6 +47,10 @@ export function createArticleSchema(input: {
   updatedAt?: string;
   image?: string;
   category?: string;
+  tags?: string[];
+  authorName?: string;
+  publisherName?: string;
+  publisherLogo?: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -57,6 +61,21 @@ export function createArticleSchema(input: {
     dateModified: input.updatedAt ?? input.publishedAt,
     image: input.image,
     articleSection: input.category,
+    keywords: input.tags?.join(", "),
+    author: {
+      "@type": "Person",
+      name: input.authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: input.publisherName,
+      logo: input.publisherLogo
+        ? {
+            "@type": "ImageObject",
+            url: input.publisherLogo,
+          }
+        : undefined,
+    },
     mainEntityOfPage: input.url,
   };
 }

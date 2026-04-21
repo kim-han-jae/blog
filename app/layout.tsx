@@ -23,6 +23,17 @@ export const metadata: Metadata = {
   description: seoConfig.defaultDescription,
   applicationName: seoConfig.siteName,
   referrer: "origin-when-cross-origin",
+  category: "news",
+  alternates: {
+    types: {
+      "application/rss+xml": [{ url: "/rss.xml", title: `${seoConfig.siteName} RSS` }],
+    },
+  },
+  icons: {
+    icon: "/logo-issueisshu.svg",
+    apple: "/logo-issueisshu.svg",
+  },
+  manifest: "/manifest.webmanifest",
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     other: {
