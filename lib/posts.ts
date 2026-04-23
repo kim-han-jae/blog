@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
 import type { UnifiedPost } from "@/types/post";
+import type { ParsedSource } from "@/lib/source-parser";
 
 const contentDir = path.join(process.cwd(), "content", "posts");
 
@@ -156,7 +157,28 @@ export function buildDraftTemplate(input: {
   postType: string;
   outline: string[];
   recommendedCTA?: string | null;
+  parsedSources?: ParsedSource[];
 }) {
+  const primaryImage =
+    input.parsedSources?.find((source) => source.image)?.image ??
+    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=80";
+
+  const sourceSummarySection =
+    input.parsedSources && input.parsedSources.length > 0
+      ? [
+          "## 참고 기사 핵심 요약",
+          "",
+          ...input.parsedSources.slice(0, 5).flatMap((source, index) => [
+            `### ${index + 1}. ${source.title}`,
+            "",
+            `- 출처: ${source.siteName ?? "외부 매체"} (${source.finalUrl})`,
+            `- 요약: ${(source.description || source.contentText).slice(0, 240)}`,
+            source.publishedAt ? `- 발행일: ${source.publishedAt}` : "",
+            "",
+          ]),
+        ]
+      : [];
+
   const sections = input.outline
     .map(
       (section, index) =>
@@ -169,9 +191,11 @@ export function buildDraftTemplate(input: {
     "",
     `> 이 글은 ${input.keyword} 키워드 기반 콘텐츠 브리프를 바탕으로 작성된 초안입니다.`,
     "",
-    "![이슈 관련 대표 이미지](https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=80)",
+    `![이슈 관련 대표 이미지](${primaryImage})`,
     "*이미지 출처: Unsplash / 라이선스 확인 후 사용*",
     "",
+    ...sourceSummarySection,
+    ...(sourceSummarySection.length > 0 ? [""] : []),
     sections,
     "",
     `## CTA`,

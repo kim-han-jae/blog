@@ -4,9 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { buildDraftTemplate, createDraftPost } from "@/lib/posts";
 import { toPlainArray } from "@/lib/utils";
 import { errorResponse, successResponse } from "@/lib/api";
+import { parseSourceUrls } from "@/lib/source-parser";
+import { discoverArticleUrlsByKeyword } from "@/lib/source-discovery";
 
 const payloadSchema = z.object({
   limit: z.number().int().min(1).max(20).optional(),
+  sourceUrls: z.array(z.string().url()).max(20).optional(),
+  sourceKeyword: z.string().min(1).max(120).optional(),
+  koreanLimit: z.number().int().min(1).max(10).optional(),
+  globalLimit: z.number().int().min(0).max(10).optional(),
 });
 
 function inferPostType(keyword: string) {
@@ -22,6 +28,20 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return errorResponse(parsed.error.flatten().formErrors.join(", ") || "Invalid payload");
     }
+
+    const discovered = !parsed.data.sourceUrls?.length && parsed.data.sourceKeyword
+      ? await discoverArticleUrlsByKeyword({
+          keyword: parsed.data.sourceKeyword,
+          koreanLimit: parsed.data.koreanLimit,
+          globalLimit: parsed.data.globalLimit,
+        })
+      : null;
+
+    const sourceUrls = parsed.data.sourceUrls?.length
+      ? parsed.data.sourceUrls
+      : (discovered?.urls ?? []);
+
+    const parsedSources = sourceUrls.length ? await parseSourceUrls(sourceUrls) : null;
 
     const briefs = await prisma.contentBrief.findMany({
       where: { status: BriefStatus.APPROVED },
@@ -45,6 +65,7 @@ export async function POST(request: Request) {
         postType,
         outline,
         recommendedCTA: brief.recommendedCTA,
+        parsedSources: parsedSources?.items,
       });
 
       const post = await createDraftPost({
@@ -67,6 +88,11 @@ export async function POST(request: Request) {
 
     return successResponse({
       count: created.length,
+      sourceCount: parsedSources?.items.length ?? 0,
+      sourceFailedCount: parsedSources?.failed.length ?? 0,
+      sourceKeyword: parsed.data.sourceKeyword ?? null,
+      discoveredKoreanCount: discovered?.koreanUrls.length ?? 0,
+      discoveredGlobalCount: discovered?.globalUrls.length ?? 0,
       items: created.map((item) => ({ id: item.id, title: item.title })),
     });
   } catch (error) {
