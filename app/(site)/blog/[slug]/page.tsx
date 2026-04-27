@@ -133,6 +133,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
             title="관련 시사 이슈 더 보기"
             description="정책, 경제, 국제 이슈를 브리프 형태로 빠르게 탐색해보세요."
             href="/blog"
+            trackingSlug={post.slug}
           />
         </div>
       </div>

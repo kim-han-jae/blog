@@ -92,3 +92,46 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
         : Number(((total.totalClicks / total.totalImpressions) * 100).toFixed(2)),
   };
 }
+
+export async function incrementPostEventBySlug(
+  slug: string,
+  eventType: "cta" | "affiliate",
+) {
+  if (!process.env.DATABASE_URL) {
+    return { tracked: false, ctaClicks: 0, affiliateClicks: 0 };
+  }
+
+  const update =
+    eventType === "affiliate"
+      ? {
+          affiliateClicks: {
+            increment: 1,
+          },
+        }
+      : {
+          ctaClicks: {
+            increment: 1,
+          },
+        };
+
+  const row = await prisma.postView.upsert({
+    where: { slug },
+    update,
+    create: {
+      slug,
+      viewCount: 0,
+      ctaClicks: eventType === "cta" ? 1 : 0,
+      affiliateClicks: eventType === "affiliate" ? 1 : 0,
+    },
+    select: {
+      ctaClicks: true,
+      affiliateClicks: true,
+    },
+  });
+
+  return {
+    tracked: true,
+    ctaClicks: row.ctaClicks,
+    affiliateClicks: row.affiliateClicks,
+  };
+}

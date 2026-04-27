@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default async function AdminAnalyticsPage() {
-  const [summary, rows] = await Promise.all([
+  const [summary, rows, postViewSummary] = await Promise.all([
     getAnalyticsSummary(),
     process.env.DATABASE_URL
       ? prisma.postAnalytics.findMany({
@@ -13,12 +13,24 @@ export default async function AdminAnalyticsPage() {
           take: 10,
         })
       : Promise.resolve([]),
+    process.env.DATABASE_URL
+      ? prisma.postView.aggregate({
+          _sum: {
+            viewCount: true,
+            ctaClicks: true,
+          },
+        })
+      : Promise.resolve({ _sum: { viewCount: 0, ctaClicks: 0 } }),
   ]);
+  const trackedViews = postViewSummary._sum.viewCount ?? 0;
+  const trackedCtaClicks = postViewSummary._sum.ctaClicks ?? 0;
+  const ctaConversionRate =
+    trackedViews === 0 ? 0 : Number(((trackedCtaClicks / trackedViews) * 100).toFixed(2));
 
   return (
     <section className="space-y-6">
       <h1 className="text-3xl font-bold">성과 분석</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card>
           <CardHeader>
             <CardTitle>Impressions</CardTitle>
@@ -48,6 +60,18 @@ export default async function AdminAnalyticsPage() {
             <CardTitle>CTA Clicks</CardTitle>
           </CardHeader>
           <CardContent>{summary.totalCtaClicks}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Tracked Views</CardTitle>
+          </CardHeader>
+          <CardContent>{trackedViews}</CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>CTA CVR</CardTitle>
+          </CardHeader>
+          <CardContent>{ctaConversionRate}%</CardContent>
         </Card>
       </div>
 
