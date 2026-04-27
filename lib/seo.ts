@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 function resolveSiteUrl() {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit;
-
   const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   if (productionDomain) return `https://${productionDomain}`;
+
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit;
 
   const previewDomain = process.env.VERCEL_URL;
   if (previewDomain) return `https://${previewDomain}`;
