@@ -12,6 +12,8 @@ import { FaqList } from "@/components/blog/faq-list";
 import { CTABox } from "@/components/cta/cta-box";
 import { PostCard } from "@/components/blog/post-card";
 import { Badge } from "@/components/ui/badge";
+import { PostViewCounter } from "@/components/blog/post-view-counter";
+import { AdPlaceholder } from "@/components/cta/ad-placeholder";
 
 type Params = { slug: string };
 
@@ -114,13 +116,17 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
         </div>
         <h1 className="text-3xl font-bold">{post.title}</h1>
         <p className="text-zinc-600">{post.excerpt}</p>
-        <p className="text-sm text-zinc-500">
-          작성일: {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString("ko-KR")}
-        </p>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-500">
+          <span>작성일: {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString("ko-KR")}</span>
+          <PostViewCounter slug={post.slug} initialCount={post.viewCount} />
+        </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-        <div className="prose-content">{content}</div>
+        <div className="space-y-6">
+          <div className="prose-content">{content}</div>
+          <AdPlaceholder label="본문 하단 광고" />
+        </div>
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <TableOfContents headings={headings} />
           <CTABox

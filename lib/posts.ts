@@ -56,6 +56,7 @@ async function getFilePosts(): Promise<UnifiedPost[]> {
           seoTitle: fm.seoTitle,
           metaDescription: fm.metaDescription,
           faqJson: null,
+          viewCount: 0,
         };
       }),
     );
@@ -94,6 +95,7 @@ async function getDbPosts(): Promise<UnifiedPost[]> {
     seoTitle: post.seoTitle,
     metaDescription: post.metaDescription,
     faqJson: post.faqJson,
+    viewCount: 0,
   }));
 }
 
@@ -103,7 +105,27 @@ export async function getAllPosts(includeDraft = false) {
   const deduped = merged.filter(
     (post, index, arr) => arr.findIndex((item) => item.slug === post.slug) === index,
   );
-  const filtered = includeDraft ? deduped : deduped.filter((post) => post.isPublished);
+  const viewCountMap = new Map<string, number>();
+
+  if (process.env.DATABASE_URL && deduped.length > 0) {
+    try {
+      const views = await prisma.postView.findMany({
+        where: { slug: { in: deduped.map((post) => post.slug) } },
+        select: { slug: true, viewCount: true },
+      });
+      views.forEach((row) => {
+        viewCountMap.set(row.slug, row.viewCount);
+      });
+    } catch {
+      // Ignore read errors so post rendering still works.
+    }
+  }
+
+  const withViews = deduped.map((post) => ({
+    ...post,
+    viewCount: viewCountMap.get(post.slug) ?? 0,
+  }));
+  const filtered = includeDraft ? withViews : withViews.filter((post) => post.isPublished);
   return filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/json-ld";
 import { createCollectionPageSchema } from "@/lib/schema";
 import { buildCanonical } from "@/lib/seo";
+import { AdsSlot } from "@/components/cta/ads-slot";
 
 export const metadata = buildMetadata({
   title: "블로그",
@@ -21,6 +22,7 @@ export default async function BlogListPage({
 }) {
   const { tag = "" } = await searchParams;
   const posts = await getAllPosts();
+  const homeAdSlot = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_HOME;
   const allTags = [...new Set(posts.flatMap((post) => post.tags))].sort();
   const filteredPosts = tag ? posts.filter((post) => post.tags.includes(tag)) : posts;
   const collectionSchema = createCollectionPageSchema({
@@ -66,6 +68,12 @@ export default async function BlogListPage({
               #{item}
             </Link>
           ))}
+        </div>
+      )}
+
+      {homeAdSlot && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <AdsSlot slot={homeAdSlot} />
         </div>
       )}
 

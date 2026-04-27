@@ -3,6 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import type { UnifiedPost } from "@/types/post";
 
+function formatViewCount(value: number) {
+  return new Intl.NumberFormat("ko-KR").format(value);
+}
+
 export function PostCard({ post }: { post: UnifiedPost }) {
   return (
     <Card className="h-full overflow-hidden">
@@ -32,9 +36,10 @@ export function PostCard({ post }: { post: UnifiedPost }) {
         <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-zinc-500">
-          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ko-KR") : "-"}
-        </p>
+        <div className="flex items-center justify-between text-xs text-zinc-500">
+          <p>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ko-KR") : "-"}</p>
+          <p>조회수 {formatViewCount(post.viewCount)}</p>
+        </div>
       </CardContent>
     </Card>
   );

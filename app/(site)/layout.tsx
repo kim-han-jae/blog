@@ -8,7 +8,8 @@ import { seoConfig } from "@/lib/seo";
 const menus = [
   { href: "/", label: "홈" },
   { href: "/blog", label: "블로그" },
-  { href: "/contact", label: "Contact" },
+  { href: "/about", label: "소개" },
+  { href: "/contact", label: "문의" },
 ];
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -53,9 +54,12 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">{children}</main>
       <footer className="border-t border-zinc-200 py-8 text-center text-sm text-zinc-500">
         © {new Date().getFullYear()} 이슈있슈. All rights reserved.
-        <div className="mt-2 space-x-3">
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/about">소개</Link>
           <Link href="/privacy">개인정보처리방침</Link>
+          <Link href="/disclosure">광고 및 제휴 고지</Link>
           <Link href="/contact">문의하기</Link>
+          <Link href="/ads.txt">ads.txt</Link>
         </div>
       </footer>
     </>

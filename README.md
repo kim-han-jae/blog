@@ -80,3 +80,4 @@ npm run dev
 - Naver 서치어드바이저에서 사이트 등록 및 소유권 인증
 - AdSense 승인 후 `NEXT_PUBLIC_GOOGLE_ADSENSE_*` 환경변수 채우고 광고 슬롯 배치
 - `https://도메인/ads.txt` 내용이 발급된 퍼블리셔 ID와 일치하는지 확인
+- 실행용 상세 체크리스트: `MONETIZATION_CHECKLIST.md`

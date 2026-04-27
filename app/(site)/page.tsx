@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { getAllPosts } from "@/lib/posts";
 import { PostCard } from "@/components/blog/post-card";
+import { AdsSlot } from "@/components/cta/ads-slot";
 
 export const metadata = buildMetadata({
   title: "최근 시사 이슈 블로그",
@@ -13,6 +14,7 @@ export const metadata = buildMetadata({
 export default async function HomePage() {
   const posts = await getAllPosts();
   const featuredPost = posts[0];
+  const homeAdSlot = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_SLOT_HOME;
 
   return (
     <div className="space-y-10">
@@ -26,6 +28,12 @@ export default async function HomePage() {
               자세히 읽기 →
             </Link>
           </div>
+        </section>
+      )}
+
+      {homeAdSlot && (
+        <section className="rounded-lg border border-zinc-200 bg-white p-4">
+          <AdsSlot slot={homeAdSlot} />
         </section>
       )}
 

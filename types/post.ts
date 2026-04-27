@@ -18,4 +18,5 @@ export type UnifiedPost = {
   seoTitle?: string | null;
   metaDescription?: string | null;
   faqJson?: unknown;
+  viewCount: number;
 };

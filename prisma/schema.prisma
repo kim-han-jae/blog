@@ -97,3 +97,11 @@ model PostAnalytics {
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
+
+model PostView {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  viewCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
